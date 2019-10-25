@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthenticationController extends Controller {
 
