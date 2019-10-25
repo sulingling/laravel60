@@ -9,6 +9,7 @@ class AppController extends Controller {
     }
 
     public function getLogin() {
+        echo "123";die;
         return view('login');
     }
 }

@@ -5,6 +5,5 @@ Route::get('/login', 'Web\AppController@getLogin')
     ->middleware('guest');
 Route::get('/auth/{social}', 'Web\AuthenticationController@getSocialRedirect')
     ->middleware('guest');
-
 Route::get('/auth/{social}/callback', 'Web\AuthenticationController@getSocialCallback')
     ->middleware('guest');
