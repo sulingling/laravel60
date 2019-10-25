@@ -20,8 +20,7 @@ use Monolog\Logger;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class StreamHandler extends AbstractProcessingHandler
-{
+class StreamHandler extends AbstractProcessingHandler {
     protected $stream;
     protected $url;
     private $errorMessage;
@@ -39,8 +38,7 @@ class StreamHandler extends AbstractProcessingHandler
      * @throws \Exception                If a missing directory is not buildable
      * @throws \InvalidArgumentException If stream is not a resource or string
      */
-    public function __construct($stream, $level = Logger::DEBUG, $bubble = true, $filePermission = null, $useLocking = false)
-    {
+    public function __construct($stream, $level = Logger::DEBUG, $bubble = true, $filePermission = null, $useLocking = false) {
         parent::__construct($level, $bubble);
         if (is_resource($stream)) {
             $this->stream = $stream;
@@ -51,18 +49,17 @@ class StreamHandler extends AbstractProcessingHandler
         }
 
         $this->filePermission = $filePermission;
-        $this->useLocking = $useLocking;
+        $this->useLocking     = $useLocking;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function close()
-    {
+    public function close() {
         if ($this->url && is_resource($this->stream)) {
             fclose($this->stream);
         }
-        $this->stream = null;
+        $this->stream     = null;
         $this->dirCreated = null;
     }
 
@@ -71,8 +68,7 @@ class StreamHandler extends AbstractProcessingHandler
      *
      * @return resource|null
      */
-    public function getStream()
-    {
+    public function getStream() {
         return $this->stream;
     }
 
@@ -81,16 +77,14 @@ class StreamHandler extends AbstractProcessingHandler
      *
      * @return string|null
      */
-    public function getUrl()
-    {
+    public function getUrl() {
         return $this->url;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function write(array $record)
-    {
+    protected function write(array $record) {
         if (!is_resource($this->stream)) {
             if (null === $this->url || '' === $this->url) {
                 throw new \LogicException('Missing stream url, the stream can not be opened. This may be caused by a premature call to close().');
@@ -105,7 +99,7 @@ class StreamHandler extends AbstractProcessingHandler
             restore_error_handler();
             if (!is_resource($this->stream)) {
                 $this->stream = null;
-                throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened: '.$this->errorMessage, $this->url));
+                throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened: ' . $this->errorMessage, $this->url));
             }
         }
 
@@ -126,13 +120,11 @@ class StreamHandler extends AbstractProcessingHandler
      * @param resource $stream
      * @param array $record
      */
-    protected function streamWrite($stream, array $record)
-    {
+    protected function streamWrite($stream, array $record) {
         fwrite($stream, (string) $record['formatted']);
     }
 
-    private function customErrorHandler($code, $msg)
-    {
+    private function customErrorHandler($code, $msg) {
         $this->errorMessage = preg_replace('{^(fopen|mkdir)\(.*?\): }', '', $msg);
     }
 
@@ -141,8 +133,7 @@ class StreamHandler extends AbstractProcessingHandler
      *
      * @return null|string
      */
-    private function getDirFromStream($stream)
-    {
+    private function getDirFromStream($stream) {
         $pos = strpos($stream, '://');
         if ($pos === false) {
             return dirname($stream);
@@ -155,8 +146,7 @@ class StreamHandler extends AbstractProcessingHandler
         return;
     }
 
-    private function createDir()
-    {
+    private function createDir() {
         // Do not try to create dir if it has already been tried.
         if ($this->dirCreated) {
             return;
@@ -169,7 +159,7 @@ class StreamHandler extends AbstractProcessingHandler
             $status = mkdir($dir, 0777, true);
             restore_error_handler();
             if (false === $status && !is_dir($dir)) {
-                throw new \UnexpectedValueException(sprintf('There is no existing directory at "%s" and its not buildable: '.$this->errorMessage, $dir));
+                throw new \UnexpectedValueException(sprintf('There is no existing directory at "%s" and its not buildable: ' . $this->errorMessage, $dir));
             }
         }
         $this->dirCreated = true;
