@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Model\Users;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthenticationController extends Controller {
@@ -18,23 +19,13 @@ class AuthenticationController extends Controller {
     public function getSocialCallback($account) {
         // 从第三方 OAuth 回调中获取用户信息
         $socialUser = Socialite::with($account)->user();
+        echo "<pre>";
+        print_r($socialUser);die;
         // 在本地 users 表中查询该用户来判断是否已存在
-        $user = User::where('provider_id', '=', $socialUser->id)
-            ->where('provider', '=', $account)
-            ->first();
-        if ($user == null) {
+        $getUserOne = Users::getUserOne($socialUser->id, $account);
+        if (empty($getUserOne)) {
             // 如果该用户不存在则将其保存到 users 表
-            $newUser = new User();
-
-            $newUser->name        = $socialUser->getName();
-            $newUser->email       = $socialUser->getEmail() == '' ? '' : $socialUser->getEmail();
-            $newUser->avatar      = $socialUser->getAvatar();
-            $newUser->password    = '';
-            $newUser->provider    = $account;
-            $newUser->provider_id = $socialUser->getId();
-
-            $newUser->save();
-            $user = $newUser;
+            $getUserOne = Users::userSetSave($socialUser);
         }
 
         // 手动登录该用户
