@@ -6,6 +6,5 @@
 	</head>
 	<body>
 		<a href="/auth/github">Log In With Github</a>
-		<a href="/login/github">Log In With Github</a>
 	</body>
 </html>
