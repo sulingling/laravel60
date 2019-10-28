@@ -16,6 +16,7 @@ class AuthenticationController extends Controller {
     }
 
     public function getSocialCallback($account) {
+        echo $account;die;
         $socialUser = Socialite::driver('github')->user();
         echo "<pre>";
         print_r($socialUser);die;
